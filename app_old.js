@@ -109,8 +109,7 @@ app.post('/', function(req, res){
       'Authorization' :  auth }
   };
 
-var finalOutput='';
-
+  
 //-------start
 relationship_extraction.extract({
   text: req.body.txt,
@@ -123,28 +122,11 @@ relationship_extraction.extract({
       var temp = response.doc.entities.entity;
     for(var i = 0; i < temp.length; i++)
       {
-        finalOutput= finalOutput + '\n' + temp[i].type + JSON.stringify(temp[i].mentref[0].text);
       console.log(temp[i].type,JSON.stringify(temp[i].mentref[0].text, null, 2));
       }
     }
-
-    // Create a request to POST to Watson
-  var watson_req = https.request(options, function(result) {
-    result.setEncoding('utf-8');
-    var resp_string = '';
-
-    result.on("data", function(chunk) {
-      resp_string += chunk;
-    });
-
-    result.on('end', function() {
-      console.log('######################'+req.body.txt);
-      //return res.render('index',{'xml':xmlescape(resp_string), 'text':req.body.txt})
-      //return res.render('index',{locals:{title: 'edit your blog', posts: "Can I render anything I want?"}});
-    return res.render('index', { watson_response: finalOutput });
-    })
-
-  });
+});
+//-------end
 
   watson_req.on('error', function(e) {
     return res.render('index', {'error':e.message})
@@ -154,9 +136,6 @@ relationship_extraction.extract({
   watson_req.write(querystring.stringify(req.body));
   //console.log(querystring.stringify(req.body));
   watson_req.end();
-});
-//-------end
-
 });
 
 

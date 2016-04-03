@@ -4,6 +4,7 @@
 // and jade as template engine (http://jade-lang.com/).
 
 var express = require('express');
+var MonkeyLearn = require('monkeylearn');
 var https = require('https');
 var url = require('url');
 var querystring = require('querystring');
@@ -109,24 +110,67 @@ app.post('/', function(req, res){
       'Authorization' :  auth }
   };
 
-  
+var finalOutput='';
+
 //-------start
 relationship_extraction.extract({
   text: req.body.txt,
   dataset: 'ie-en-news' },
   function (err, response) {
-
+    //fetching entities and building a string
     if (err)
       console.log('error:', err);
     else{
       var temp = response.doc.entities.entity;
     for(var i = 0; i < temp.length; i++)
       {
+        finalOutput= finalOutput + '\n' + temp[i].type + JSON.stringify(temp[i].mentref[0].text);
       console.log(temp[i].type,JSON.stringify(temp[i].mentref[0].text, null, 2));
       }
     }
+
+    //call monkeylearn and find the crime category
+    var ml = new MonkeyLearn('1e98c9c6fea2aacefcdaa85139610725f42366fe');
+    var ml_prediction='';
+var module_id = 'cl_N8BmpbrK';
+var text_list = [req.body.txt];
+var p = ml.classifiers.classify(module_id, text_list, true);
+p.then(function (res2) {
+  var temp = res2.result;
+  temp = temp[0];
+  if (temp.length>1)
+  {
+    ml_prediction = '\nCrime Prediction:' + temp[0].label + ' --> ' +temp[1].label +'\n';
+  console.log('\nCrime Prediction:',temp[0].label + ' --> ' +temp[1].label +'\n');
+}
+else
+{
+  ml_prediction = '\nCrime Prediction:' + temp[0].label + '\n';
+  console.log('\nCrime Prediction:',temp[0].label + '\n');
+}
 });
-//-------end
+
+
+    // Create a request to POST to Watson
+  var watson_req = https.request(options, function(result) {
+    result.setEncoding('utf-8');
+    var resp_string = '';
+
+    result.on("data", function(chunk) {
+      resp_string += chunk;
+    });
+
+    result.on('end', function() {
+      console.log('######################'+req.body.txt);
+      //return res.render('index',{'xml':xmlescape(resp_string), 'text':req.body.txt})
+      //return res.render('index',{locals:{title: 'edit your blog', posts: "Can I render anything I want?"}});
+    res.render('index', { watson_response: finalOutput, ml_response: ml_prediction });
+    //res.render('index', { watson_response2: 'sample response' });
+    return res.render('index');
+    })
+
+  });
+
 
   watson_req.on('error', function(e) {
     return res.render('index', {'error':e.message})
@@ -136,6 +180,11 @@ relationship_extraction.extract({
   watson_req.write(querystring.stringify(req.body));
   //console.log(querystring.stringify(req.body));
   watson_req.end();
+
+
+});
+//-------end
+
 });
 
 
