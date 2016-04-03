@@ -140,13 +140,13 @@ p.then(function (res2) {
   temp = temp[0];
   if (temp.length>1)
   {
-    ml_prediction = '\nCrime Prediction:' + temp[0].label + ' --> ' +temp[1].label +'\n';
-  console.log('\nCrime Prediction:',temp[0].label + ' --> ' +temp[1].label +'\n');
+    ml_prediction = '\n' + temp[0].label + ' --> ' +temp[1].label +'\n';
+  console.log('\n',temp[0].label + ' --> ' +temp[1].label +'\n');
 }
 else
 {
-  ml_prediction = '\nCrime Prediction:' + temp[0].label + '\n';
-  console.log('\nCrime Prediction:',temp[0].label + '\n');
+  ml_prediction = '\n' + temp[0].label + '\n';
+  console.log('\n',temp[0].label + '\n');
 }
 });
 
