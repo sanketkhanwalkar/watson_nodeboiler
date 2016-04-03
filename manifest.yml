@@ -1,0 +1,7 @@
+applications:
+- services:
+  - re-service
+  name: re-nodejs
+  command: node app.js
+  path: .
+  memory: 128M
