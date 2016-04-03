@@ -13,12 +13,25 @@ block row-content
                   label.control-label(for='textArea') Enter or paste a crime report
                   textarea#textArea.form-control(name="txt", rows='12', required="true") #{text}
                   span.help-block
-                    | The bot is currently limited to crimes like theft, abuse(physical, drug, sexual) and suspicion(activity, person)
+                    .alert.alert-dismissable.alert-warning
+                      button.close( type="button", data-dismiss="alert" )
+                      The bot is currently limited to crimes like theft, abuse (physical, drug, sexual) and suspicion (activity, person)
               div.form-group.row(style='margin-bottom: 0px; padding-top: 5px;')
                 div.col-lg-5.col-lg-push-7
                   input(type='hidden', name='rt', value='xml')
                   button.btn.btn-block(type='submit') Analyze
       div.col-lg-6
+        a.btn.btn-success Success
+        a.btn.btn-lg-success Success Large Button
+        .alert.alert-dismissable.alert-warning
+          button.close( type="button", data-dismiss="alert" ) ×
+          | Warning! Warning!
+        .jumbotron
+          h1 Hello, world!
+          p This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.
+          a.btn.btn-lg-success Read More
+        input#inputlg.form-control.input-lg(type='text')
+          
         h2 Output
         h4 Crime Prediction
           h6 #{ml_response}
